@@ -1,0 +1,39 @@
+sudo apt update
+sudo apt install squid
+sudo mkdir /etc/squid/ssl_cert
+sudo openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/squid/ssl_cert/squid.key -out /etc/squid/ssl_cert/squid.crt
+sudo cat /etc/squid/ssl_cert/squid.crt /etc/squid/ssl_cert/squid.key > /etc/squid/ssl_cert/squid.pem
+sudo chmod 400 /etc/squid/ssl_cert/squid.pem
+sudo nano /etc/squid/squid.conf
+    (
+    # HTTP and HTTPS Ports
+    http_port 3128
+    https_port 3129 cert=/etc/squid/ssl_cert/squid.pem key=/etc/squid/ssl_cert/squid.key intercept ssl-bump
+    
+    # SSL Bumping Settings
+    acl step1 at_step SslBump1
+    ssl_bump peek step1
+    ssl_bump bump all
+    sslcrtd_program /usr/lib/squid/security_file_certgen -s /var/spool/squid_ssldb -M 4MB
+    sslcrtd_children 5
+    
+    # Web Filtering and Access Control
+    acl allowed_sites dstdomain "/etc/squid/allowed_sites.txt"
+    http_access allow allowed_sites
+    http_access deny all
+    
+    # Access Control Logging
+    access_log /var/log/squid/access.log
+    )
+
+
+sudo nano /etc/squid/allowed_sites.txt
+    .example.com
+    .anotherdomain.com
+
+sudo systemctl restart squid
+sudo systemctl enable squid
+sudo ufw allow 3128/tcp
+sudo ufw allow 3129/tcp
+
+

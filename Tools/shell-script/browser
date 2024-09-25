@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Array of URLs
+urls=(
+  "https://outlook.office.com/mail/"
+  "https://teams.microsoft.com/"
+  "https://web.skype.com/"
+  "https://web.whatsapp.com/"
+  "https://chatgpt.com/"
+  "https://google.com/"
+)
+
+# Path to Google Chrome (may vary based on your OS)
+chrome_path="/usr/bin/google-chrome"
+
+# Loop through each URL and open in Chrome
+for url in "${urls[@]}"; do
+  $chrome_path "$url"
+done
