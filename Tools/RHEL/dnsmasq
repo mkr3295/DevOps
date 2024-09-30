@@ -1,0 +1,14 @@
+sudo apt update
+sudo apt install dnsmasq
+sudo nano /etc/dnsmasq.conf
+
+# Use Google's public DNS servers
+server=8.8.8.8
+server=8.8.4.4
+
+# Listen to the local network interface (adjust for your private IP)
+listen-address=127.0.0.1, 172.31.41.14
+
+
+
+
