@@ -36,4 +36,9 @@ sudo systemctl enable squid
 sudo ufw allow 3128/tcp
 sudo ufw allow 3129/tcp
 
+sudo apt install apache2-utils
+sudo touch /etc/squid/passwd
+sudo chmod 640 /etc/squid/passwd
+sudo htpasswd /etc/squid/passwd manish
 
+sudo chmod o+r /etc/squid/passwd

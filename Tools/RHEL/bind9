@@ -1,0 +1,50 @@
+# set dns
+ sudo nano /etc/hosts
+    #172.31.4.239 dns.manish.com dns --use local ip
+sudo hostnamectl set-hostname dns
+hostname --fqdn
+sudo apt-get update
+sudo apt install bind9 bind9utils bind9-doc -y
+sudo nano /etc/default/named
+    #OPTIONS=" -4 -u bind" --update the line
+sudo systemctl restart bind9
+sudo ufw allow Bind9
+sudo ufw allow 53
+netstat -antu |grep 53
+sudo nano /etc/bind/named.conf.options # update like below
+        directory "/var/cache/bind";
+        recursion yes;
+        listen-on port 53{172.31.4.239};
+        allow-query {any;};
+sudo nano /etc/bind/named.conf.local # update like below
+    // Do any local configuration here
+    //
+    zone "manish.com"IN {
+            type master;
+            file "/etc/bind/zones/forward.zone.manish.com"
+            allow-update{none;};
+    };
+
+cd /etc/bind/zones
+sudo nano forward.zone.manish.com # update file 
+; Base forward file zone for manish.com
+
+$TTL 2d
+$ORIGIN manish.com.
+
+@       IN      SOA     dns.manish.com.         admin@manish.com(
+                                                2               ; serial
+                                                604800          ; Refresh
+                                                86400           ; Retry
+                                                24192000        ; Expire
+                                                604800  )       ; Negative Cache TTL
+
+
+        IN      NS      dns.manish.com
+dns     IN      A       172.31.4.239
+
+;; We can add additional records for forward lookup
+
+drive   IN      A       172.31.4.238
+photos  IN      A       172.31.4.237
+
